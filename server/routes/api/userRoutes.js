@@ -32,6 +32,38 @@ router.post("/create-user", async (req,res)=>{
 
 })
 
+router.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Fetch the user by email
+        const [rows] = await db.execute(
+            'SELECT id, username, email, password FROM users WHERE email = ?',
+            [email]
+        );
+
+        if (rows.length === 0) {
+            res.status(401).json({ error: 'Invalid email or password' });
+            return;
+        }
+
+        const user = rows[0];
+
+        // Verify the password
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            res.status(401).json({ error: 'Invalid email or password' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Login successful', user: { id: user.id, username: user.username, email: user.email } });
+    } catch (err) {
+        res.status(500).json({ error: 'Error while logging in', details: err });
+        console.log(err);
+    }
+});
+
 router.get("/all-users", async (req,res) => {
     try{
         const [users] = await db.execute(
