@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import fondo from "./assets/fondo.avif";
 import banner from "./assets/banner.png";
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import './App.css';
 
@@ -121,6 +122,7 @@ const LoginLogo = styled.img /*style*/`
 `;
 
 const Login = () => {
+    const navigate = useNavigate()
     const [user, setUser] = useState<string>('');
     const [mail, setMail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -141,6 +143,53 @@ const Login = () => {
     const toggleForm = () => {
         setIsLogin(!isLogin);
     };
+
+
+    const login = async (username: string, password:string) => {
+        try {
+            const response = await fetch('http://localhost:3001/exam/api/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+    
+            const authResponse = await response.json();
+            if (response.ok) {
+                console.log('Login successful:', (authResponse?.user?.token));
+                await localStorage.setItem("token",authResponse?.user?.token )
+               navigate("/characters")
+            } else {
+                console.error('Error logging in:', authResponse?.token);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const signUp = async (username:string, email:string, password:string) => {
+        try {
+            const response = await fetch('/create-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                console.log('User created successfully:', data);
+            } else {
+                console.error('Error creating user:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+   
 
     return (
         <div
@@ -164,19 +213,23 @@ const Login = () => {
                         value={user}
                         onChange={handleUserChange}
                     />
+                    {!isLogin &&(
                     <StyledInput
                         placeholder="Mail"
                         type="text"
                         value={mail}
                         onChange={handleMailChange}
                     />
+                )}|
                     <StyledInput
                         placeholder="Password"
                         type="password"
                         value={password}
                         onChange={handlePasswordChange}
                     />
-                    <StyledButton type="button" disabled>
+                    <StyledButton type="button" 
+                     onClick={isLogin ? ()=>{login(user,password)} : ()=>{signUp(user,mail,password)}}
+                    >
                         {isLogin ? 'Login' : 'Sign Up'}
                     </StyledButton>
                 </StyledForm>

@@ -2,6 +2,7 @@ const router = require("express").Router()
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
 const db = require("../../config/connection")
+const jwt = require("jsonwebtoken")
 
 
 
@@ -34,30 +35,32 @@ router.post("/create-user", async (req,res)=>{
 
 router.post("/login", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
 
-        // Fetch the user by email
         const [rows] = await db.execute(
-            'SELECT id, username, email, password FROM users WHERE email = ?',
-            [email]
+            'SELECT id, username, email, password FROM users WHERE username = ?',
+            [username]
         );
 
         if (rows.length === 0) {
-            res.status(401).json({ error: 'Invalid email or password' });
+            res.status(401).json({ error: 'Invalid username or password' });
             return;
         }
+
+        const token = jwt.sign({ username: username }, "Stack", {
+            expiresIn: "1m"
+        });
 
         const user = rows[0];
 
-        // Verify the password
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            res.status(401).json({ error: 'Invalid email or password' });
+            res.status(401).json({ error: 'Invalid username or password' });
             return;
         }
 
-        res.status(200).json({ message: 'Login successful', user: { id: user.id, username: user.username, email: user.email } });
+        res.status(200).json({ message: 'Login successful', user: { token } });
     } catch (err) {
         res.status(500).json({ error: 'Error while logging in', details: err });
         console.log(err);

@@ -8,7 +8,7 @@ const routes = require('./routes')
 
 
 app.use(express.json())
-//app.use(cors())
+app.use(cors())
 app.use(express.urlencoded({extended:true}));
 
 db.getConnection((err,connection)=>{
