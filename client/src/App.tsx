@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-import { BrowserRouter as Router} from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppRoutes from './Routes';
 
 
 function App() {
@@ -8,9 +9,9 @@ function App() {
 
   return (
     <>
-     <Router basename='/'>
-
-     </Router>
+      <Router basename='/'>
+        <AppRoutes></AppRoutes>
+      </Router>
     </>
   )
 }
