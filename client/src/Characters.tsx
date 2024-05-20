@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useEffect, useState, useCallback } from "react";
 import { Character } from "./utils/charTypes";
 import { ApiResponse } from "./utils/charTypes";
+import FavModal from "./FavModal";
 
 
 export const ScrollContainer = styled.div /*style*/ `
@@ -82,6 +83,8 @@ const Characters = () => {
     const [current_page, setCurrent_page] = useState<number>(1)
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const [selectedCharacter, setSelectedCharacter] = useState<Character>([]as any)
     const url = `https://rickandmortyapi.com/api/character?page=${current_page}`
 
 
@@ -138,11 +141,23 @@ const Characters = () => {
         fetchCharacters(url);
       }, [current_page]);
 
+      const closeModal = () =>{
+        setModalOpen(false)
+      }
+      const openModal =() =>{
+        setModalOpen(true)
+      }
+    
+      const handleCharacterSelection = (location:Character) =>{
+        setSelectedCharacter(location)
+      }
+
         return (
             <ScrollContainer id="container">
                 {chars?.map((char) => (
                     <CharCard id="char-card"
                     height="26rem"
+                    onClick={()=>{openModal(),handleCharacterSelection(char)}}
                     //   key={char.id}
                     >
                         <ImgCont>
@@ -157,6 +172,14 @@ const Characters = () => {
                         </CardInfo>
                     </CharCard>
                 ))}
+                {modalOpen && (
+          <FavModal
+          type={`Species: ${selectedCharacter?.species}`}
+          name={`Name: ${selectedCharacter?.name}`}
+          dimension={`Status: ${selectedCharacter?.status}`}
+          closeModal={closeModal}
+          ></FavModal>
+        )}
             </ScrollContainer>
         )
     }

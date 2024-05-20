@@ -20,6 +20,8 @@ const ModalContent = styled.div /*style*/ `
   text-align: center;
   color: black;
   position: relative;
+  width:25%;
+  height:15rem;
 `;
 
 const Cerrar = styled.button /*style*/ `
@@ -31,15 +33,28 @@ const Cerrar = styled.button /*style*/ `
   background-color: #e74c3c;
 `;
 
-const FavModal = () =>{
+interface ModalProps{
+  name: string,
+  dimension:string,
+  type: string,
+  closeModal ():void
+}
+
+const FavModal:React.FC<ModalProps> = (props) =>{
     return(
-<ModalOverlay >
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <h2>a</h2>
-        <p>a</p>
-        <p>Precio: </p>
-        <Cerrar>X</Cerrar>
-        <button >Añadir a Favoritos</button>
+<ModalOverlay 
+
+>
+      <ModalContent>
+        <h2>{props.name}</h2>
+        <p>{props.dimension}</p>
+        <p> {props.type}</p>
+        <Cerrar
+        onClick={props.closeModal}
+        >X</Cerrar>
+        <button 
+        type='button'
+        >Añadir a Favoritos</button>
       </ModalContent>
     </ModalOverlay>
 

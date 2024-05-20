@@ -20,6 +20,8 @@ const Locations = () => {
   const [current_page, setCurrent_page] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [selectedLocation, setSelectedLocation] = useState<Location>([]as any)
   const url = `https://rickandmortyapi.com/api/location?page=${current_page}`;
 
   const useBottomScrollDetection = (callback: () => void): void => {
@@ -75,11 +77,24 @@ const Locations = () => {
     fetchLocations(url);
   }, [current_page]);
 
+  const closeModal = () =>{
+    setModalOpen(false)
+  }
+  const openModal =() =>{
+    setModalOpen(true)
+  }
+
+  const handleLocationSelection = (location:Location) =>{
+    setSelectedLocation(location)
+  }
+
   return (
     <ScrollContainer id="container">
       {locations?.map((location) => (
+        <>
         <LocationCard id="location-card" key={location.id}
           height="25rem"
+          onClick={()=>{openModal(),handleLocationSelection(location)}}
         >
           <LocationInfo>
             <h1 className="nameText margins">Dimension: {location?.dimension}</h1>
@@ -92,8 +107,18 @@ const Locations = () => {
             />
           </ImgCont>
         </LocationCard>
+          </>
       ))}
-      <FavModal></FavModal>
+
+{modalOpen && (
+          <FavModal
+          type={`Type: ${selectedLocation?.type}`}
+          name={`Name: ${selectedLocation?.name}`}
+          dimension={`Dimension: ${selectedLocation?.dimension}`}
+          closeModal={closeModal}
+          ></FavModal>
+        )}
+    
     </ScrollContainer>
   )
 
