@@ -47,6 +47,7 @@ const Favorites = () => {
     const [characters,setChars] = useState<Character[]>([])
     const [modalOpen,setModalOpen] = useState<boolean>(false)
     const [selectedFav, setSelectedFav] = useState<string>("")
+    const[selectedType, setSelectedType] = useState<string>("")
 
     async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
         const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/user-favs-location?user_id=${userId}`);
@@ -70,6 +71,11 @@ const Favorites = () => {
         const data: FavoriteLocation[] = await response.json();
 
         return data;
+    }
+
+    const modalOpenHnadler = async () =>{
+
+        setModalOpen(true)
     }
 
     useEffect(() => {
@@ -144,6 +150,14 @@ const Favorites = () => {
         }
     }
 
+    const selectedFavHandler = async (selected:string) => {
+        setSelectedFav(selected)
+    }
+
+    const selectedTypeHandler = () => {
+        
+    }
+
    
 
     useEffect(() => {
@@ -169,7 +183,11 @@ const Favorites = () => {
             )}
             {locations?.map((fav) => (
                 <LocationCard
-                onClick={()=>{setModalOpen(true), setSelectedFav(fav?.id.toString()),console.log(selectedFav)}}
+                onClick={() => {
+                    modalOpenHnadler().then(() => {
+                      selectedFavHandler(fav?.id.toString());
+                    });
+                  }}
                     key={fav?.id}
                     height="26rem"
                 >
@@ -187,7 +205,11 @@ const Favorites = () => {
             ))}
             {characters?.map((fav) => (
                 <CharCard id="char-card"
-                onClick={()=>{setModalOpen(true), setSelectedFav(fav?.id.toString()),console.log(selectedFav)}}
+                onClick={() => {
+                    modalOpenHnadler().then(() => {
+                      selectedFavHandler(fav?.id.toString());
+                    });
+                  }}
                 height="26rem"
                  key={fav?.id}
                 >
