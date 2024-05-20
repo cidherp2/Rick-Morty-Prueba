@@ -82,7 +82,7 @@ const FavModal:React.FC<ModalProps> = (props) =>{
         <button 
        onClick={() => {
         if (parsedJwt?.id) {
-          addFavoriteLocation(parsedJwt.id, props.item_id, props.select).then(props.closeModal);
+          addFavoriteLocation(parsedJwt?.id, props?.item_id, props?.select).then(props.closeModal);
       
         } else {
           console.error('User ID is not available');
