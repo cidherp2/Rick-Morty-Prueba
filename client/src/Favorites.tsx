@@ -169,7 +169,7 @@ const Favorites = () => {
             )}
             {locations?.map((fav) => (
                 <LocationCard
-                onClick={()=>{setModalOpen(true), setSelectedFav(fav?.toString()),console.log(selectedFav)}}
+                onClick={()=>{setModalOpen(true), setSelectedFav(fav?.id.toString()),console.log(selectedFav)}}
                     key={fav?.id}
                     height="26rem"
                 >
