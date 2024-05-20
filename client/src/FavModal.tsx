@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useJwt } from './TokenContex';
 
@@ -46,6 +46,7 @@ interface ModalProps{
 
 const FavModal:React.FC<ModalProps> = (props) =>{
   const { parsedJwt } = useJwt();
+  const [tokenId, setTokenId] = useState<string>(parsedJwt?.id)
   const addFavoriteLocation = async (userId:string, itemId:string,select:string) => {
     try {
         const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/add-favorite-${select}`, {
@@ -81,8 +82,8 @@ const FavModal:React.FC<ModalProps> = (props) =>{
         >X</Cerrar>
         <button 
        onClick={() => {
-        if (parsedJwt?.id) {
-          addFavoriteLocation(parsedJwt?.id, props?.item_id, props?.select).then(props.closeModal);
+        if (tokenId) {
+          addFavoriteLocation(tokenId, props?.item_id, props?.select).then(props.closeModal);
       
         } else {
           console.error('User ID is not available');

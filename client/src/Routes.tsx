@@ -37,6 +37,16 @@ else if (!tokenValidation){
 }
  },[tokenValidation])
 
+ useEffect(()=>{
+if(window.location.pathname ==="/"){
+    navigate("/login")
+}
+else if (!tokenValidation){
+    navigate("/login")
+    localStorage.clear()
+}
+ },[tokenValidation])
+
 
 
     return (
