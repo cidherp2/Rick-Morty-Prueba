@@ -6,32 +6,33 @@ const jwt = require("jsonwebtoken")
 
 
 
-router.post("/create-user", async (req,res)=>{
-    try{
-        const {username,email,password} = req.body 
-        const userId = uuidv4()
-        const hashedPw = await bcrypt.hash(password,10)
+router.post("/create-user", async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        const userId = uuidv4();
+        const hashedPw = await bcrypt.hash(password, 10);
 
-       
-
-        const [user] = await db.execute(
+        const [result] = await db.execute(
             'INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)',
             [userId, username, email, hashedPw]
-        )
-        if (user){
-            res.status(500).json({error:'The user already exists'}, err)
-            return
+        );
+
+        if (result.affectedRows === 0) {
+            res.status(500).json({ error: 'The user could not be created' });
+            return;
         }
-        res.status(201).json({message: 'User created successfully'})
-        console.log("user Id: ", userId)
 
-    }
-    catch(err){
-    res.status(500).json({ error: 'Error while creating the user', details: err });
-    console.log(err)
-    }
+        const token = jwt.sign({  id: userId, username: username }, "Stack", {
+            expiresIn: "3m"
+        });
 
-})
+        res.status(201).json({ message: 'User created and logged in successfully', user: { token } });
+        console.log("user Id: ", userId);
+    } catch (err) {
+        res.status(500).json({ error: 'Error while creating the user', details: err });
+        console.log(err);
+    }
+});
 
 router.post("/login", async (req, res) => {
     try {
@@ -46,13 +47,13 @@ router.post("/login", async (req, res) => {
             res.status(401).json({ error: 'Invalid username or password' });
             return;
         }
-
-        const token = jwt.sign({ username: username }, "Stack", {
-            expiresIn: "1m"
-        });
-
         const user = rows[0];
 
+        const token = jwt.sign({  id: user.id, username: username }, "Stack", {
+            expiresIn: "3m"
+        });
+
+       
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {

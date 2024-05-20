@@ -74,6 +74,8 @@ export const CharImg = styled.img /*style*/`
 
   `;
 
+ 
+
 const Characters = () => {
     type CharacterArray = {
         Characters: Character | null
@@ -151,6 +153,7 @@ const Characters = () => {
       const handleCharacterSelection = (location:Character) =>{
         setSelectedCharacter(location)
       }
+    
 
         return (
             <ScrollContainer id="container">
@@ -174,6 +177,8 @@ const Characters = () => {
                 ))}
                 {modalOpen && (
           <FavModal
+          select="Character"
+          item_id={selectedCharacter?.id.toString()}
           type={`Species: ${selectedCharacter?.species}`}
           name={`Name: ${selectedCharacter?.name}`}
           dimension={`Status: ${selectedCharacter?.status}`}

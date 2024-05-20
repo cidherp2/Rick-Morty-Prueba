@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS rm_scroller;
-CREATE DATABASE  rm_scroller;
+-- DROP DATABASE IF EXISTS rm_scroller;
+-- CREATE DATABASE  rm_scroller;
 
 USE rm_scroller;
 CREATE TABLE users (

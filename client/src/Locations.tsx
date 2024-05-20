@@ -9,7 +9,7 @@ import { ImgCont } from "./Characters";
 import { CharImg } from "./Characters";
 import FavModal from "./FavModal";
 
-const LocationCard = styled(CharCard)`
+export const LocationCard = styled(CharCard)`
 
 `
 const LocationInfo = styled(CardInfo)`
@@ -112,6 +112,8 @@ const Locations = () => {
 
 {modalOpen && (
           <FavModal
+          select="location"
+          item_id={`${selectedLocation?.id}`}
           type={`Type: ${selectedLocation?.type}`}
           name={`Name: ${selectedLocation?.name}`}
           dimension={`Dimension: ${selectedLocation?.dimension}`}

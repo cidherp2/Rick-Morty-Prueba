@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useJwt } from './TokenContex';
+
 
 const ModalOverlay = styled.div /*style*/ `
   position: fixed;
@@ -37,10 +39,37 @@ interface ModalProps{
   name: string,
   dimension:string,
   type: string,
+  item_id: string
   closeModal ():void
+  select:string
 }
 
 const FavModal:React.FC<ModalProps> = (props) =>{
+  const { parsedJwt } = useJwt();
+  const addFavoriteLocation = async (userId:string, itemId:string,select:string) => {
+    try {
+        const response = await fetch(`http://localhost:3001/exam/api/favorites/add-favorite-${select}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+          },
+            body: JSON.stringify({ user_id: userId, item_id: itemId })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            console.log('Favorite added successfully:', data);
+        } else {
+            console.error('Error adding favorite:', data);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+useEffect(()=>{
+console.log("hola" ,parsedJwt?.id)
+},[])
     return(
 <ModalOverlay 
 
@@ -53,6 +82,14 @@ const FavModal:React.FC<ModalProps> = (props) =>{
         onClick={props.closeModal}
         >X</Cerrar>
         <button 
+       onClick={() => {
+        if (parsedJwt?.id) {
+          addFavoriteLocation(parsedJwt.id, props.item_id, props.select).then(props.closeModal);
+      
+        } else {
+          console.error('User ID is not available');
+        }
+      }}
         type='button'
         >Añadir a Favoritos</button>
       </ModalContent>

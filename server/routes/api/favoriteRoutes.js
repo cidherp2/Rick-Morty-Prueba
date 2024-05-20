@@ -1,37 +1,41 @@
 const router = require("express").Router()
 const db = require("../../config/connection")
 
-router.post("/add-favorite-Character", async (req, res)=>{
-    try{
-        const {user_id, item_id} = req.body
-        const[favorite] = await db.execute(
+router.post("/add-favorite-Character", async (req, res) => {
+    try {
+        const { user_id, item_id } = req.body
+        const [favorite] = await db.execute(
             "INSERT INTO favorites (user_id,item_id) VALUES (?,?)",
-            [user_id,item_id]
+            [user_id, item_id]
         )
 
-        res.status(201).json({message: 'Favorite added '})
+        res.status(201).json({ message: 'Favorite added ' })
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 })
-router.post("/add-favorite-location", async (req, res)=>{
-    try{
-        const {user_id, item_id} = req.body
-        const[favorite] = await db.execute(
+router.post("/add-favorite-location", async (req, res) => {
+    try {
+        const { user_id, item_id } = req.body
+        const [favorite] = await db.execute(
             "INSERT INTO favoritesLocation (user_id,item_id) VALUES (?,?)",
-            [user_id,item_id]
+            [user_id, item_id]
         )
 
-        res.status(201).json({message: 'Favorite added '})
+        res.status(201).json({ message: 'Favorite added ' })
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 })
 
-router.get("/user-favs", async (req, res) =>{
-    try{
+router.get("/user-favs", async (req, res) => {
+    try {
+        const { user_id } = req.query
+        if (!user_id) {
+            return res.status(400).json({ error: 'user_id query parameter is required' });
+        }
         const query = `
         SELECT 
           favorites.id AS favorite_id,
@@ -44,35 +48,43 @@ router.get("/user-favs", async (req, res) =>{
         WHERE 
           users.id = ?;
       `;
-       await  db.execute(query,[user_id])
+      const [results] = await db.execute(query, [user_id]);
+      res.json(results);  
     }
 
-    catch(err){
+    catch (err) {
         console.log(err)
+        res.status(500).json({ error: 'Internal server error' });
+
     }
 
 })
-router.get("/user-favs", async (req, res) =>{
-    try{
+router.get("/user-favs-location", async (req, res) => {
+    try {
+        const { user_id } = req.query;  // Extracting user_id from query parameters
+        if (!user_id) {
+            return res.status(400).json({ error: 'user_id query parameter is required' });
+        }
+
         const query = `
         SELECT 
-          favorites.id AS favorite_id,
-          favorites.item_id,
-          favorites.created_at
+          favoritesLocation.id AS favorite_id,
+          favoritesLocation.item_id,
+          favoritesLocation.created_at
         FROM 
-        favoritesLocation
+          favoritesLocation
         JOIN 
-          users ON favorites.user_id = users.id
+          users ON favoritesLocation.user_id = users.id
         WHERE 
           users.id = ?;
       `;
-       await  db.execute(query,[user_id])
-    }
 
-    catch(err){
-        console.log(err)
+        const [results] = await db.execute(query, [user_id]);
+        res.json(results);  
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-})
+});
 
 module.exports = router

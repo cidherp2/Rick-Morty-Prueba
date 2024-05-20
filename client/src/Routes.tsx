@@ -37,6 +37,8 @@ else if (!tokenValidation){
 }
  },[tokenValidation])
 
+
+
     return (
         <Routes>
             <Route path="/characters" element={<> <NavBar/><Banner/><Characters></Characters></>}></Route>

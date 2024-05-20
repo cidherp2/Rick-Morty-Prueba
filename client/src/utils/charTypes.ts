@@ -48,3 +48,14 @@ export interface Character {
     };
     results: Location[];
   }
+
+  export interface FavoriteLocation {
+    favorite_id: number;
+    item_id: number;
+    created_at: string;  // Adjust this type based on your actual date format
+}
+  export interface FavoriteChars {
+    favorite_id: number;
+    item_id: number;
+    created_at: string;  // Adjust this type based on your actual date format
+}

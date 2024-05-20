@@ -168,9 +168,9 @@ const Login = () => {
         }
     };
 
-    const signUp = async (username:string, email:string, password:string) => {
+    const signUp = async (username: string, email: string, password: string) => {
         try {
-            const response = await fetch('/create-user', {
+            const response = await fetch('http://localhost:3001/exam/api/user/create-user', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -180,7 +180,9 @@ const Login = () => {
     
             const data = await response.json();
             if (response.ok) {
-                console.log('User created successfully:', data);
+                console.log('User created and logged in successfully:', data);
+                await localStorage.setItem("token", data?.user?.token); 
+                navigate("/characters"); 
             } else {
                 console.error('Error creating user:', data);
             }
