@@ -12,7 +12,7 @@ import FavModal from "./FavModal";
 export const LocationCard = styled(CharCard)`
 
 `
-const LocationInfo = styled(CardInfo)`
+export const LocationInfo = styled(CardInfo)`
 // `
 
 const Locations = () => {

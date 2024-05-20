@@ -1,41 +1,70 @@
 import { useEffect, useState } from "react";
-import { ScrollContainer } from "./Characters";
+import { ImgCont, ScrollContainer } from "./Characters";
 import { CharCard } from "./Characters";
 import { FavoriteLocation } from "./utils/charTypes";
 import { useJwt } from './TokenContex';
 import { Location } from "./utils/charTypes";
 import { FavoriteChars } from "./utils/charTypes";
-import { LocationCard } from "./Locations";
+import { LocationCard, LocationInfo } from "./Locations";
+import head from "./assets/mortHead.png"
+import portal from "./assets/portal.png"
+import styled from "styled-components";
+import { CharImg } from "./Characters";
+
+const RickAndMortyButton = styled.div /*style*/`
+  background-color: #61dafb;
+  border: none;
+  border-radius: 5px;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position:relative;
+
+height:10rem;
+width:30%;
+  &:hover {
+    background-color: #00bfff;
+  }
+`;
+
+const FavImage = styled(CharImg) /*style*/ `
+width:50%;
+`
+
 
 
 const Favorites = () => {
-const {parsedJwt} = useJwt()
+    const { parsedJwt } = useJwt()
     const [favorites, setFavorites] = useState<FavoriteLocation[]>()
     const [favoriteChars, setFavoriteChars] = useState<FavoriteChars[]>()
     const [locations, setLocations] = useState<Location[]>([])
+    const [buttonVisible, setButtonVisible] = useState<boolean>(true)
 
-    async function fetchUserFavorites(userId: string):Promise<FavoriteLocation[]> {
+    async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
         const response = await fetch(`http://localhost:3001/exam/api/favorites/user-favs-location?user_id=${userId}`);
-    
-    if (!response.ok) {
-        throw new Error('Bad response');
+
+        if (!response.ok) {
+            throw new Error('Bad response');
+        }
+
+        const data: FavoriteLocation[] = await response.json();
+
+        return data;
     }
 
-    const data: FavoriteLocation[] = await response.json();
-
-    return data;
-    }
-
-    const fetchUserFavoriteChars = async (userId:string):Promise<FavoriteChars[]> => {
+    const fetchUserFavoriteChars = async (userId: string): Promise<FavoriteChars[]> => {
         const response = await fetch(`http://localhost:3001/exam/api/favorites/user-favs?user_id=${userId}`);
-    
-    if (!response.ok) {
-        throw new Error('Bad response');
-    }
 
-    const data: FavoriteLocation[] = await response.json();
+        if (!response.ok) {
+            throw new Error('Bad response');
+        }
 
-    return data;
+        const data: FavoriteLocation[] = await response.json();
+
+        return data;
     }
 
     useEffect(() => {
@@ -45,17 +74,17 @@ const {parsedJwt} = useJwt()
                 console.log(data)
                 setFavorites(data);
             } catch (err) {
-               console.log(err)
+                console.log(err)
             }
         }
 
-        async function fetchFavoriteChars (){
+        async function fetchFavoriteChars() {
             try {
                 const data = await fetchUserFavoriteChars(parsedJwt?.id);
                 console.log(data)
                 setFavoriteChars(data);
             } catch (err) {
-               console.log(err)
+                console.log(err)
             }
         }
         fetchFavoriteChars()
@@ -70,22 +99,23 @@ const {parsedJwt} = useJwt()
                     console.log("Bad response from server");
                     return null;
                 }
-                
-                const location = await response.json();
+
+                const location = await response?.json();
                 return location;
             });
-    
-            const locations = await Promise.all(fetchPromises as any);
-            const validLocations = locations.filter(location => location !== null);
-            setLocations((prevLocations) => [...prevLocations, ...validLocations]);
-            console.log(validLocations)
-    
+            if (fetchPromises) {
+                const location = await Promise.all(fetchPromises as any);
+                const validLocations = location?.filter(location => location !== null);
+                setLocations((prevLocations) => [...prevLocations, ...validLocations]);
+                console.log(validLocations)
+            }
+
         } catch (err) {
             console.log(err);
         }
     };
-    
-    const fetchCharacters = async () =>{
+
+    const fetchCharacters = async () => {
         try {
             const fetchPromises = favoriteChars?.map(async (fav) => {
                 const response = await fetch(`https://rickandmortyapi.com/api/character/${fav?.item_id}`);
@@ -93,38 +123,60 @@ const {parsedJwt} = useJwt()
                     console.log("Bad response from server");
                     return null;
                 }
-                
-                const location = await response.json();
+
+                const location = await response?.json();
                 return location;
             });
-    
-            const chars = await Promise.all(fetchPromises as any);
-            const validChars = chars.filter(location => location !== null);
-            setLocations((prevLocations) => [...prevLocations, ...validChars]);
-            console.log(validChars)
-    
+            if (fetchPromises) {
+                const chars = await Promise.all(fetchPromises as any);
+                const validChars = chars?.filter(location => location !== null);
+                setLocations((prevLocations) => [...prevLocations, ...validChars]);
+                console.log(validChars)
+            }
+
         } catch (err) {
             console.log(err);
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchUserFavorites(parsedJwt?.id)
-        fetchLocations(); 
-        fetchCharacters()
-        
-    },[])
+        // fetchLocations(); 
+        // fetchCharacters()
+
+    }, [])
 
     return (
         <ScrollContainer>
-
-            {locations?.map((fav)=>(
-            <LocationCard
-            key={fav?.id}
-            height="25rem"
-            >
-            <p> Hola</p>
-            </LocationCard>
+            {buttonVisible && (
+                <RickAndMortyButton
+                    onClick={() => { fetchLocations(), fetchCharacters(),setButtonVisible(false) }}
+                >
+                    <FavImage
+                        src={head}
+                    ></FavImage>
+                    <h1
+                        style={{ fontSize: "1.3rem", fontWeight: "130", position: "absolute", bottom: "-5%", left: "28%" }}
+                    >Click To see your favorites</h1>
+                </RickAndMortyButton>
+            )}
+            {locations?.map((fav) => (
+                <LocationCard
+                    onAuxClick={fetchLocations}
+                    key={fav?.id}
+                    height="25rem"
+                >
+                    <LocationInfo>
+                        <h1 className="nameText margins">Dimension: {fav?.dimension}</h1>
+                        <h1 className="speciesText margins">name: {fav?.name}</h1>
+                        <h1 className="originText margins">type: {fav?.type}</h1>
+                    </LocationInfo>
+                    <ImgCont>
+                        <CharImg
+                            src={portal}
+                        />
+                    </ImgCont>
+                </LocationCard>
             ))}
 
         </ScrollContainer>
