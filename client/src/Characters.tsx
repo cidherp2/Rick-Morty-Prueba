@@ -41,7 +41,7 @@ margin:none !important;
 }
 
 `
-const ImgCont = styled.div /*style*/ `
+export const ImgCont = styled.div /*style*/ `
 width:90%;
 height:70%;
 overflow: hidden; 
@@ -61,7 +61,7 @@ align-items:flex-start;
 padding-left:1rem;
 gap:1;
 `
-const CharImg = styled.img /*style*/`
+export const CharImg = styled.img /*style*/`
     object-fit:cover;
     width: 100%;
     height:auto;
