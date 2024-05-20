@@ -46,7 +46,7 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
 
   const deleteFavorite = async (favoriteId: string): Promise<void> => {
     try {
-      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-char/${favoriteId}`, {
+      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/delete-fav-char/${favoriteId}`, {
         method: 'DELETE',
       });
 
@@ -61,7 +61,7 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
   }
   const deleteFavoriteLocation = async (favoriteId: string): Promise<void> => {
     try {
-      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-location/${favoriteId}`, {
+      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/delete-fav-location/${favoriteId}`, {
         method: 'DELETE',
       });
 

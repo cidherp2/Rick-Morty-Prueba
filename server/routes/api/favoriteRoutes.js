@@ -100,7 +100,7 @@ router.delete('/delete-fav-char/:id', async (req, res) => {
 router.delete('/delete-fav-location/:id', async (req, res) => {
     const favoriteId = req.params.id;
     try {
-        await db.query('DELETE  FROM favorites WHERE item_id = ?', [favoriteId]);
+        await db.query('DELETE  FROM favoritesLocation WHERE item_id = ?', [favoriteId]);
         res.status(204).send(); 
     } catch (err) {
         console.error(err);
