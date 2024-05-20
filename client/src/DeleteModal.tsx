@@ -38,64 +38,74 @@ const Cerrar = styled.button /*style*/ `
 
 
 interface ModalProps {
-    item_id: string
-    closeModal ():void
+  item_id: string
+  closeModal(): void
+}
+
+const DeleteModal: React.FC<ModalProps> = (props) => {
+
+  const deleteFavorite = async (favoriteId: string): Promise<void> => {
+    try {
+      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-char/${favoriteId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        console.log('Favorite deleted successfully');
+      } else {
+        console.error('Failed to delete favorite');
+      }
+    } catch (error) {
+      console.error('Error deleting favorite:', error);
+    }
+  }
+  const deleteFavoriteLocation = async (favoriteId: string): Promise<void> => {
+    try {
+      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-char/${favoriteId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        console.log('Favorite deleted successfully');
+      } else {
+        console.error('Failed to delete favorite');
+      }
+    } catch (error) {
+      console.error('Error deleting favorite:', error);
+    }
   }
 
-const DeleteModal:React.FC<ModalProps>  = (props) =>{
+  return (
+    <ModalOverlay
 
-    const  deleteFavorite = async (favoriteId: string): Promise<void> => {
-        try {
-            const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-char/${favoriteId}`, {
-                method: 'DELETE',
-            });
-    
-            if (response.ok) {
-                console.log('Favorite deleted successfully');
-            } else {
-                console.error('Failed to delete favorite');
-            }
-        } catch (error) {
-            console.error('Error deleting favorite:', error);
-        }
-    }
-    const  deleteFavoriteLocation = async (favoriteId: string): Promise<void> => {
-        try {
-            const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-char/${favoriteId}`, {
-                method: 'DELETE',
-            });
-    
-            if (response.ok) {
-                console.log('Favorite deleted successfully');
-            } else {
-                console.error('Failed to delete favorite');
-            }
-        } catch (error) {
-            console.error('Error deleting favorite:', error);
-        }
-    }
-
-    return(
-<ModalOverlay 
-
->
+    >
       <ModalContent>
         <h2>Delete from favorites</h2>
         <Cerrar
-        onClick={props.closeModal}
+          onClick={props.closeModal}
         >X</Cerrar>
-        <button 
-    
-        onClick={()=>{if(props?.item_id){
-            deleteFavorite(props?.item_id).then(()=>{deleteFavoriteLocation(props?.item_id)}).then(props.closeModal)
-        }}}
-        style={{background:"#e74c3c", color:"white",height:"8rem"}}
-        type='button'
+        <button
+
+          onClick={() => {
+            if (props?.item_id) {
+              deleteFavorite(props.item_id)
+                .then(() => deleteFavoriteLocation(props.item_id))
+                .then(() => {
+                  props.closeModal();
+                  window.location.reload();
+                })
+                .catch((error) => {
+                  console.error('Error deleting favorite:', error);
+                });
+            }
+          }}
+          style={{ background: "#e74c3c", color: "white", height: "8rem" }}
+          type='button'
         >Delete From Favorites</button>
       </ModalContent>
     </ModalOverlay>
 
-    )
+  )
 }
 
 export default DeleteModal
