@@ -2,7 +2,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Characters from "./Characters";
 import NavBar from "./assets/Navbar";
 import Banner from "./Banner";
-import Locations from "./assets/Locations";
+import Locations from "./Locations";
 
 
 const AppRoutes = () => {

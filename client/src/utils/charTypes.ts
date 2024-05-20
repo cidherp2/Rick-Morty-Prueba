@@ -28,3 +28,23 @@ export interface Character {
     };
     results: Character[];
   }
+
+  export interface Location {
+    id: number;
+    name: string;
+    type: string;
+    dimension: string;
+    residents: string[]; // Assuming these are URLs to character resources
+    url: string;
+    created: string;
+  }
+  
+  export interface LocationInfo {
+    info: {
+      count: number;
+      pages: number;
+      next: string | null;
+      prev: string | null;
+    };
+    results: Location[];
+  }

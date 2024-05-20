@@ -14,9 +14,9 @@ flex-wrap:wrap;
 gap:1rem;
 justify-content:center;
 `
-export const CharCard = styled.div /*style*/ `
+export const CharCard = styled.div<{height:string}> /*style*/ `
 width:20%;
-height:26rem ;
+height:${props => (props.height)} ;
 background:white;
 display:flex;
 flex-direction:column;
@@ -142,6 +142,7 @@ const Characters = () => {
             <ScrollContainer id="container">
                 {chars?.map((char) => (
                     <CharCard id="char-card"
+                    height="26rem"
                     //   key={char.id}
                     >
                         <ImgCont>
