@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Character } from "./utils/charTypes";
+import { ApiResponse } from "./utils/charTypes";
 
-const ScrollContainer = styled.div /*style*/ `
+
+export const ScrollContainer = styled.div /*style*/ `
 margin-top: 2rem;
 width:100vw;
 height:100vh ;
@@ -12,7 +14,7 @@ flex-wrap:wrap;
 gap:1rem;
 justify-content:center;
 `
-const CharCard = styled.div /*style*/ `
+export const CharCard = styled.div /*style*/ `
 width:20%;
 height:26rem ;
 background:white;
@@ -34,7 +36,7 @@ font-size:.9rem;
 font-size:.9rem;
 }
 .originText{
-font-size:.9rem;
+font-size:.8rem;
 }
 .margins{
 margin:none !important;
@@ -51,7 +53,7 @@ opacity: .9;
 
 }
 `
-const CardInfo = styled.div /*style*/ `
+export const CardInfo = styled.div /*style*/ `
 width:100%;
 height:50%;
 display:flex;
@@ -74,48 +76,88 @@ export const CharImg = styled.img /*style*/`
 const Characters = () => {
     type CharacterArray = {
         Characters: Character | null
-      };
+    };
 
     const [chars, setChars] = useState<Character[]>([])
-   
-    const fetchCharacters = async () => {
-        try {
-            const response = await fetch("https://rickandmortyapi.com/api/character")
-            if (!response.ok) {
-                console.log("bad response from server")
+    const [current_page, setCurrent_page] = useState<number>(1)
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
+    const url = `https://rickandmortyapi.com/api/character?page=${current_page}`
+
+
+      const useBottomScrollDetection = (callback: () => void): void => {
+        useEffect(() => {
+          const isBottom = (): boolean => {
+            return (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
+          };
+      
+          const handleScroll = () => {
+            if (isBottom()) {
+              callback();
             }
-            const characters = await response.json()
-            setChars(characters.results)
-            console.log(characters)
-        }
-        catch (err) {
+          };
+      
+          window.addEventListener('scroll', handleScroll);
+          return () => window.removeEventListener('scroll', handleScroll);
+        }, [callback]);
+      };
+      
 
+      const fetchCharacters = useCallback(async (url:string) => {
+        try {
+          setLoading(true);
+          const response = await fetch(`${url}`);
+          if (!response.ok) {
+            console.log("Bad response from server");
+            setLoading(false);
+            return;
+          }
+          
+          const characters = await response.json();
+          const moreCharacters = characters?.results;
+    
+          setChars((prevCharacters) => [...prevCharacters, ...moreCharacters]);
+    
+          if (!characters.info.next) {
+            setHasMore(false);
+          }
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
         }
+      }, []);
 
+      useBottomScrollDetection(() => {
+        if (!loading && hasMore) {
+          setCurrent_page((prevPage) => prevPage + 1);
+        }
+      });
+
+      useEffect(() => {
+        fetchCharacters(url);
+      }, [current_page]);
+
+        return (
+            <ScrollContainer id="container">
+                {chars?.map((char) => (
+                    <CharCard id="char-card"
+                    //   key={char.id}
+                    >
+                        <ImgCont>
+                            <CharImg
+                                src={char?.image}
+                            />
+                        </ImgCont>
+                        <CardInfo>
+                            <h1 className="nameText margins">Name: {char?.name}</h1>
+                            <h1 className="speciesText margins">Species: {char?.species}</h1>
+                            <h1 className="originText margins">Origin: {char?.origin.name}</h1>
+                        </CardInfo>
+                    </CharCard>
+                ))}
+            </ScrollContainer>
+        )
     }
-    useEffect(() => {
-        fetchCharacters()
-    }, [])
-    return (
-        <ScrollContainer id="container">
-            {chars?.map((char)=>(
-            <CharCard id="char-card"
-            key={char?.id}
-            >
-            <ImgCont>
-            <CharImg
-            src={char?.image}
-            />
-            </ImgCont>
-            <CardInfo>
-            <h1 className="nameText margins">Name: {char?.name}</h1>
-            <h1 className="speciesText margins">Species: {char?.species}</h1>
-            <h1 className="originText margins">Origin: {char?.origin.name}</h1>
-            </CardInfo>
-            </CharCard>
-            ))}
-        </ScrollContainer>
-    )
-}
 
 export default Characters
