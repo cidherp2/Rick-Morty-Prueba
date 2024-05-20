@@ -222,7 +222,7 @@ const Login = () => {
                         value={mail}
                         onChange={handleMailChange}
                     />
-                )}|
+                )}{isLogin ? "|": ""}
                     <StyledInput
                         placeholder="Password"
                         type="password"
@@ -239,7 +239,7 @@ const Login = () => {
                     {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
                 </div>
                 <LoginTitle className='final'>Rick and Morty©</LoginTitle>
-                <LoginTitle className='final'>Infinite Fan Scroller</LoginTitle>
+                <LoginTitle className='final'>{isLogin ? 'Infinite Fan Scroller' : ""}</LoginTitle>
             </LoginCard>
         </div>
     );

@@ -59,6 +59,21 @@ const DeleteModal:React.FC<ModalProps>  = (props) =>{
             console.error('Error deleting favorite:', error);
         }
     }
+    const  deleteFavoriteLocation = async (favoriteId: string): Promise<void> => {
+        try {
+            const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites//delete-fav-char/${favoriteId}`, {
+                method: 'DELETE',
+            });
+    
+            if (response.ok) {
+                console.log('Favorite deleted successfully');
+            } else {
+                console.error('Failed to delete favorite');
+            }
+        } catch (error) {
+            console.error('Error deleting favorite:', error);
+        }
+    }
 
     return(
 <ModalOverlay 
@@ -72,7 +87,7 @@ const DeleteModal:React.FC<ModalProps>  = (props) =>{
         <button 
     
         onClick={()=>{if(props?.item_id){
-            deleteFavorite(props?.item_id).then(props.closeModal)
+            deleteFavorite(props?.item_id).then(()=>{deleteFavoriteLocation(props?.item_id)}).then(props.closeModal)
         }}}
         style={{background:"#e74c3c", color:"white",height:"8rem"}}
         type='button'

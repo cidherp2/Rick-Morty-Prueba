@@ -97,5 +97,15 @@ router.delete('/delete-fav-char/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+router.delete('/delete-fav-location/:id', async (req, res) => {
+    const favoriteId = req.params.id;
+    try {
+        await db.query('DELETE  FROM favorites WHERE item_id = ?', [favoriteId]);
+        res.status(204).send(); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 module.exports = router
