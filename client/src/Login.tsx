@@ -147,7 +147,7 @@ const Login = () => {
 
     const login = async (username: string, password:string) => {
         try {
-            const response = await fetch('http://localhost:3001/exam/api/user/login', {
+            const response = await fetch('https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -170,7 +170,7 @@ const Login = () => {
 
     const signUp = async (username: string, email: string, password: string) => {
         try {
-            const response = await fetch('http://localhost:3001/exam/api/user/create-user', { 
+            const response = await fetch('https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/user/create-user', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -48,7 +48,7 @@ const FavModal:React.FC<ModalProps> = (props) =>{
   const { parsedJwt } = useJwt();
   const addFavoriteLocation = async (userId:string, itemId:string,select:string) => {
     try {
-        const response = await fetch(`http://localhost:3001/exam/api/favorites/add-favorite-${select}`, {
+        const response = await fetch(`https:/rick-and-morty-backend-889d8aa11dad.herokuapp.com//exam/api/favorites/add-favorite-${select}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

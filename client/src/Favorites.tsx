@@ -49,7 +49,7 @@ const Favorites = () => {
     const [selectedFav, setSelectedFav] = useState<string>("")
 
     async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
-        const response = await fetch(`http://localhost:3001/exam/api/favorites/user-favs-location?user_id=${userId}`);
+        const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/user-favs-location?user_id=${userId}`);
 
         if (!response.ok) {
             throw new Error('Bad response');
@@ -61,7 +61,7 @@ const Favorites = () => {
     }
 
     const fetchUserFavoriteChars = async (userId: string): Promise<FavoriteChars[]> => {
-        const response = await fetch(`http://localhost:3001/exam/api/favorites/user-favs?user_id=${userId}`);
+        const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/user-favs?user_id=${userId}`);
 
         if (!response.ok) {
             throw new Error('Bad response');
