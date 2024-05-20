@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ImgCont, ScrollContainer } from "./Characters";
+import Characters, { CardInfo, ImgCont, ScrollContainer } from "./Characters";
 import { CharCard } from "./Characters";
-import { FavoriteLocation } from "./utils/charTypes";
+import { Character, FavoriteLocation } from "./utils/charTypes";
 import { useJwt } from './TokenContex';
 import { Location } from "./utils/charTypes";
 import { FavoriteChars } from "./utils/charTypes";
@@ -10,6 +10,8 @@ import head from "./assets/mortHead.png"
 import portal from "./assets/portal.png"
 import styled from "styled-components";
 import { CharImg } from "./Characters";
+import DeleteModal from "./DeleteModal";
+import FavModal from "./FavModal";
 
 const RickAndMortyButton = styled.div /*style*/`
   background-color: #61dafb;
@@ -42,6 +44,9 @@ const Favorites = () => {
     const [favoriteChars, setFavoriteChars] = useState<FavoriteChars[]>()
     const [locations, setLocations] = useState<Location[]>([])
     const [buttonVisible, setButtonVisible] = useState<boolean>(true)
+    const [characters,setChars] = useState<Character[]>([])
+    const [modalOpen,setModalOpen] = useState<boolean>(false)
+    const [selectedFav, setSelectedFav] = useState<string>("")
 
     async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
         const response = await fetch(`http://localhost:3001/exam/api/favorites/user-favs-location?user_id=${userId}`);
@@ -130,7 +135,7 @@ const Favorites = () => {
             if (fetchPromises) {
                 const chars = await Promise.all(fetchPromises as any);
                 const validChars = chars?.filter(location => location !== null);
-                setLocations((prevLocations) => [...prevLocations, ...validChars]);
+                setChars((prevLocations) => [...prevLocations, ...validChars]);
                 console.log(validChars)
             }
 
@@ -138,6 +143,8 @@ const Favorites = () => {
             console.log(err);
         }
     }
+
+   
 
     useEffect(() => {
         fetchUserFavorites(parsedJwt?.id)
@@ -162,9 +169,9 @@ const Favorites = () => {
             )}
             {locations?.map((fav) => (
                 <LocationCard
-                    onAuxClick={fetchLocations}
+                onClick={()=>{setModalOpen(true), setSelectedFav(fav?.toString()),console.log(selectedFav)}}
                     key={fav?.id}
-                    height="25rem"
+                    height="26rem"
                 >
                     <LocationInfo>
                         <h1 className="nameText margins">Dimension: {fav?.dimension}</h1>
@@ -178,7 +185,32 @@ const Favorites = () => {
                     </ImgCont>
                 </LocationCard>
             ))}
+            {characters?.map((fav) => (
+                <CharCard id="char-card"
+                onClick={()=>{setModalOpen(true), setSelectedFav(fav?.id.toString()),console.log(selectedFav)}}
+                height="26rem"
+                 key={fav?.id}
+                >
+                    <ImgCont>
+                        <CharImg
+                            src={fav?.image}
+                        />
+                    </ImgCont>
+                    <CardInfo>
+                        <h1 className="nameText margins">Name: {fav?.name}</h1>
+                        <h1 className="speciesText margins">Species: {fav?.species}</h1>
+                        <h1 className="originText margins">Origin: {fav?.origin.name}</h1>
+                    </CardInfo>
+                </CharCard>
+            ))}
+            {modalOpen &&(
+            <DeleteModal
+            item_id={selectedFav}
+            closeModal={()=>{setModalOpen(false)}}
+            >
 
+            </DeleteModal>
+            )}
         </ScrollContainer>
     )
 }

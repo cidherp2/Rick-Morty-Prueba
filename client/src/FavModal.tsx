@@ -67,9 +67,7 @@ const FavModal:React.FC<ModalProps> = (props) =>{
     }
 };
 
-useEffect(()=>{
-console.log("hola" ,parsedJwt?.id)
-},[])
+
     return(
 <ModalOverlay 
 
@@ -91,7 +89,7 @@ console.log("hola" ,parsedJwt?.id)
         }
       }}
         type='button'
-        >Añadir a Favoritos</button>
+        >Add To Favorites</button>
       </ModalContent>
     </ModalOverlay>
 

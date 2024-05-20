@@ -61,7 +61,7 @@ router.get("/user-favs", async (req, res) => {
 })
 router.get("/user-favs-location", async (req, res) => {
     try {
-        const { user_id } = req.query;  // Extracting user_id from query parameters
+        const { user_id } = req.query; 
         if (!user_id) {
             return res.status(400).json({ error: 'user_id query parameter is required' });
         }
@@ -84,6 +84,17 @@ router.get("/user-favs-location", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.delete('/delete-fav-char/:id', async (req, res) => {
+    const favoriteId = req.params.id;
+    try {
+        await db.query('DELETE  FROM favorites WHERE item_id = ?', [favoriteId]);
+        res.status(204).send(); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

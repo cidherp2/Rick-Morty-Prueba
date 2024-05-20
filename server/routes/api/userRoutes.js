@@ -23,7 +23,7 @@ router.post("/create-user", async (req, res) => {
         }
 
         const token = jwt.sign({  id: userId, username: username }, "Stack", {
-            expiresIn: "3m"
+            expiresIn: "2m"
         });
 
         res.status(201).json({ message: 'User created and logged in successfully', user: { token } });
@@ -50,7 +50,7 @@ router.post("/login", async (req, res) => {
         const user = rows[0];
 
         const token = jwt.sign({  id: user.id, username: username }, "Stack", {
-            expiresIn: "3m"
+            expiresIn: "2m"
         });
 
        
