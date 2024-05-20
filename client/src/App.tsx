@@ -11,7 +11,7 @@ function App() {
   return (
     <>
     <JwtProvider>
-      <Router basename='/'>
+      <Router basename='/login'>
         <AppRoutes></AppRoutes>
       </Router>
       </JwtProvider>
