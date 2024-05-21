@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useEffect, useState, useCallback } from "react";
 import { Character } from "./utils/charTypes";
-import { ApiResponse } from "./utils/charTypes";
+import { useJwt } from './TokenContex';
 import FavModal from "./FavModal";
 
 
@@ -88,6 +88,7 @@ const Characters = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const [selectedCharacter, setSelectedCharacter] = useState<Character>([]as any)
     const url = `https://rickandmortyapi.com/api/character?page=${current_page}`
+    const { parsedJwt } = useJwt();
 
 
       const useBottomScrollDetection = (callback: () => void): void => {
@@ -153,6 +154,14 @@ const Characters = () => {
       const handleCharacterSelection = (location:Character) =>{
         setSelectedCharacter(location)
       }
+
+      useEffect(()=>{
+        if(!parsedJwt){
+          console.log("chiuuuu")
+        window.location.reload()
+        }
+        
+            },[])
     
 
         return (

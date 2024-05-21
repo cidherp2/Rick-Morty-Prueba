@@ -102,6 +102,8 @@ const Favorites = () => {
         fetchFavorites();
     }, []);
 
+
+
     const fetchLocations = async () => {
         try {
             const fetchPromises = favorites?.map(async (fav) => {
@@ -155,7 +157,7 @@ const Favorites = () => {
     }
 
     const selectedTypeHandler = () => {
-        
+
     }
 
    
