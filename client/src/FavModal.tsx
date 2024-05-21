@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useJwt } from './TokenContex';
+import { useNavigate } from 'react-router-dom';
 
 
 const ModalOverlay = styled.div /*style*/ `
@@ -45,6 +46,7 @@ interface ModalProps{
 }
 
 const FavModal:React.FC<ModalProps> = (props) =>{
+  const navigate = useNavigate()
   const { parsedJwt } = useJwt();
   const [tokenId, setTokenId] = useState<string>(parsedJwt?.id)
   const addFavoriteLocation = async (userId:string, itemId:string,select:string) => {
@@ -67,6 +69,18 @@ const FavModal:React.FC<ModalProps> = (props) =>{
         console.error('Error:', error);
     }
 };
+
+useEffect(()=>{
+  setTokenId(parsedJwt)
+  
+},[])
+useEffect(()=>{
+  if(!tokenId){
+    console.log("hola")
+    window.location.reload
+  }
+
+},[])
 
 
     return(
