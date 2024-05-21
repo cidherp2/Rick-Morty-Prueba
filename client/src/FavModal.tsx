@@ -71,8 +71,14 @@ const FavModal:React.FC<ModalProps> = (props) =>{
 };
 
 useEffect(()=>{
-  setTokenId(parsedJwt)
+  setTokenId(parsedJwt?.id)
   
+},[])
+useEffect(()=>{
+  if(!tokenId){
+    console.log("hola")
+    window.location.reload()
+  }
 },[])
 
 
