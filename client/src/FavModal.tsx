@@ -74,13 +74,6 @@ useEffect(()=>{
   setTokenId(parsedJwt)
   
 },[])
-useEffect(()=>{
-  if(!tokenId){
-    console.log("hola")
-    window.location.reload
-  }
-
-},[])
 
 
     return(
