@@ -61,6 +61,7 @@ const Favorites = () => {
     const [selectedFav_id, setSelectedFav_id] = useState<string>("")
     const[selectedType, setSelectedType] = useState<string>("")
     const [searcBarText, setSearchBarText] = useState<string>("")
+    const [favCharsByTag, setCharsByTag] = useState<any[]>([])
 
     async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
         const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/user-favs-location?user_id=${userId}`);
@@ -114,6 +115,15 @@ const Favorites = () => {
         fetchFavorites();
     }, []);
 
+    const setTagInfo = async () =>{
+        try{
+
+        }
+        catch(err){
+            console.log(err);
+        }
+    } 
+
 
 
     const fetchLocations = async () => {
@@ -165,6 +175,30 @@ const Favorites = () => {
             console.log(err);
         }
     };
+    const fetchCharactersBytag = async () => {
+        try {
+            const fetchPromises = favoriteChars?.map(async (fav) => {
+                const response = await fetch(`https://rickandmortyapi.com/api/character/${fav?.item_id}`);
+                if (!response.ok) {
+                    console.log("Bad response from server");
+                    return null;
+                }
+    
+                const character = await response?.json();
+                character.favorite_id = fav.favorite_id;
+                console.log(character)
+                return character;
+            });
+            if (fetchPromises) {
+                const characters = await Promise.all(fetchPromises as any);
+                const validCharacters = characters?.filter(character => character !== null);
+                setChars((prevCharacters) => [...prevCharacters, ...validCharacters]);
+                console.log(validCharacters);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const selectedFavHandler = async (selected:string, selectedFav:string) => {
         setSelectedFav(selected)
@@ -177,15 +211,13 @@ const Favorites = () => {
         window.history.pushState({}, '', url.toString());
     }
 
-    const fetchCharactersTag = async () =>{ 
-
+    const fetchFavoriteTag = async (userId: string) => {
         try {
-            const response = await fetch('/search-character-tags', {
+            const response = await fetch(`/search-character-tags?user_id=${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ tag: searcBarText })
+                }
             });
     
             if (!response.ok) {
@@ -193,11 +225,11 @@ const Favorites = () => {
             }
     
             const data = await response.json();
-            console.log(data); // Do something with the data
+            return data; // Return the data
         } catch (error) {
             console.error('Error:', error);
+            return null; // Return null or handle error appropriately
         }
-
     }
 
     

@@ -108,7 +108,7 @@ router.delete('/delete-fav-location/:id', async (req, res) => {
     }
 });
 
-router.get("/search-character-tags/:user_id", async (req, res) => {
+router.post("/search-character-tags/:user_id", async (req, res) => {
    const  tag  = req.body.tag;
     const userId = req.params.user_id;
     
