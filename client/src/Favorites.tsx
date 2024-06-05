@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { CharImg } from "./Characters";
 import DeleteModal from "./DeleteModal";
 import FavModal from "./FavModal";
+import { Tag } from "./DeleteModal";
 
 const RickAndMortyButton = styled.div /*style*/`
   background-color: #61dafb;
@@ -35,6 +36,16 @@ width:30%;
 const FavImage = styled(CharImg) /*style*/ `
 width:50%;
 `
+const TagInput = styled (Tag) /*style*/ `
+font-size: 1.3rem;
+font-weight: 130;
+position: absolute;
+bottom: -.1%;
+left: 25%;
+margin-bottom: 1rem;
+width: 50%;
+background: rgb(255,255,255,.8);
+`
 
 
 
@@ -49,6 +60,7 @@ const Favorites = () => {
     const [selectedFav, setSelectedFav] = useState<string>("")
     const [selectedFav_id, setSelectedFav_id] = useState<string>("")
     const[selectedType, setSelectedType] = useState<string>("")
+    const [searcBarText, setSearchBarText] = useState<string>("")
 
     async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
         const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/user-favs-location?user_id=${userId}`);
@@ -140,12 +152,13 @@ const Favorites = () => {
     
                 const character = await response?.json();
                 character.favorite_id = fav.favorite_id;
+                console.log(character)
                 return character;
             });
             if (fetchPromises) {
                 const characters = await Promise.all(fetchPromises as any);
                 const validCharacters = characters?.filter(character => character !== null);
-                setChars((prevCharacters) => [ ...validCharacters]);
+                setChars((prevCharacters) => [...prevCharacters, ...validCharacters]);
                 console.log(validCharacters);
             }
         } catch (err) {
@@ -164,21 +177,42 @@ const Favorites = () => {
         window.history.pushState({}, '', url.toString());
     }
 
-    const selectedTypeHandler = () => {
+    const fetchCharactersTag = async () =>{ 
+
+        try {
+            const response = await fetch('/search-character-tags', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tag: searcBarText })
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            console.log(data); // Do something with the data
+        } catch (error) {
+            console.error('Error:', error);
+        }
 
     }
+
+    
 
    
 
     useEffect(() => {
         fetchUserFavorites(parsedJwt?.id)
-        setButtonVisible(true)
-        setButtonVisible(false)
-        if (buttonVisible===false){
-         //fetchLocations(); 
-        fetchCharacters()
+        // setButtonVisible(true)
         // setButtonVisible(false)
-        }
+        // if (buttonVisible===false){
+        //  //fetchLocations(); 
+        // fetchCharacters()
+        // // setButtonVisible(false)
+        // }
 
     }, [favoriteChars])
 
@@ -186,14 +220,16 @@ const Favorites = () => {
         <ScrollContainer>
             {buttonVisible && (
                 <RickAndMortyButton
-                    //  onClick={() => { fetchLocations(), fetchCharacters(),setButtonVisible(false) }}
+                     onClick={() => { fetchLocations(), fetchCharacters(),setButtonVisible(false) }}
                 >
                     <FavImage
                         src={head}
                     ></FavImage>
-                    <h1
+                    <TagInput
+                    ></TagInput>
+                    {/* <h1
                         style={{ fontSize: "1.3rem", fontWeight: "130", position: "absolute", bottom: "-5%", left: "28%" }}
-                    >Click To see your favorites</h1>
+                    >Click To see your favorites</h1> */}
                 </RickAndMortyButton>
             )}
             {locations?.map((fav) => (

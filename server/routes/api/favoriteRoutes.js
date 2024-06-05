@@ -108,10 +108,12 @@ router.delete('/delete-fav-location/:id', async (req, res) => {
     }
 });
 
-router.get("/search-character-tags", async (req, res) => {
-    const  {tag}  = req.body;
-    if (!tag) {
-        return res.status(400).json({ error: 'Tag query parameter is required' });
+router.get("/search-character-tags/:user_id", async (req, res) => {
+   const  tag  = req.body.tag;
+    const userId = req.params.user_id;
+    
+    if (!tag || !userId) {
+        return res.status(400).json({ error: 'Tag and userId parameters are required' });
     }
     
     try {
@@ -125,9 +127,9 @@ router.get("/search-character-tags", async (req, res) => {
             JOIN 
                 favorites ON Tags.favorite_id = favorites.id
             WHERE 
-                Tags.tag = ?;
-        `;
-        const [results] = await db.execute(query, [tag]);
+                Tags.tag LIKE ? AND
+                Tags.user_id = ?;`;
+        const [results] = await db.execute(query, [tag, userId]);
         res.json(results);  
     } catch (err) {
         console.error(err);

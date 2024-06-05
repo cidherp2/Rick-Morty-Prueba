@@ -74,7 +74,7 @@ const Cerrar = styled.button /*style*/ `
   background-color: #e74c3c;
 `;
 
-const Tag = styled.input /*style*/ `
+export const Tag = styled.input /*style*/ `
 background: rgb(0,0,0,.2);
 color:black;
 width:15%;
