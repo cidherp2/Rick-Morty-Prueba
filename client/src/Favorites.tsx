@@ -87,6 +87,7 @@ const Favorites = () => {
             } catch (err) {
                 console.log(err)
             }
+            
         }
 
         async function fetchFavoriteChars() {
@@ -144,7 +145,7 @@ const Favorites = () => {
             if (fetchPromises) {
                 const characters = await Promise.all(fetchPromises as any);
                 const validCharacters = characters?.filter(character => character !== null);
-                setChars((prevCharacters) => [...prevCharacters, ...validCharacters]);
+                setChars((prevCharacters) => [ ...validCharacters]);
                 console.log(validCharacters);
             }
         } catch (err) {
@@ -171,16 +172,21 @@ const Favorites = () => {
 
     useEffect(() => {
         fetchUserFavorites(parsedJwt?.id)
-        // fetchLocations(); 
-        // fetchCharacters()
+        setButtonVisible(true)
+        setButtonVisible(false)
+        if (buttonVisible===false){
+         //fetchLocations(); 
+        fetchCharacters()
+        // setButtonVisible(false)
+        }
 
-    }, [])
+    }, [favoriteChars])
 
     return (
         <ScrollContainer>
             {buttonVisible && (
                 <RickAndMortyButton
-                    onClick={() => { fetchLocations(), fetchCharacters(),setButtonVisible(false) }}
+                    //  onClick={() => { fetchLocations(), fetchCharacters(),setButtonVisible(false) }}
                 >
                     <FavImage
                         src={head}

@@ -73,9 +73,9 @@ const NavBar = () => {
     <li className="liStyle"
     onClick={() => {navigate("/characters")}}
     >Characters</li>
-    <li className="liStyle"
+    {/* <li className="liStyle"
     onClick={() => {navigate("/Locations")}}
-    >Locations</li>
+    >Locations</li> */}
     <li className="liStyle"
     onClick={() => {navigate("/Favorites")}}
     >Favorites</li>

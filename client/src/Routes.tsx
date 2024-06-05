@@ -52,7 +52,7 @@ else if (!tokenValidation){
     return (
         <Routes>
             <Route path="/characters" element={<> <NavBar/><Banner/><Characters></Characters></>}></Route>
-            <Route path="/locations" element={<> <NavBar/><Banner/><Locations/></>}></Route>
+            {/* <Route path="/locations" element={<> <NavBar/><Banner/><Locations/></>}></Route> */}
             <Route path="/favorites" element={<> <NavBar/><Banner/><Favorites></Favorites></>}></Route>
             <Route path="/login" element={<Login></Login>}></Route>
         </Routes>
