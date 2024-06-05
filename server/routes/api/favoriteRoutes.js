@@ -121,7 +121,8 @@ router.get("/search-character-tags/:user_id", async (req, res) => {
             SELECT 
                 Tags.id AS tag_id,
                 Tags.tag,
-                Tags.favorite_id
+                Tags.favorite_id,
+                favorites.item_id
             FROM 
                 Tags
             JOIN 
