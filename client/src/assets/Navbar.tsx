@@ -12,7 +12,8 @@ margin-top:0 !important;
 display:flex;
 align-items:center;
 box-shadow: 0px 4.59475px 4.59475px rgba(0, 0, 0, 0.25);
-
+position: fixed;
+z-index: 10;
 `
 
 const MenuNav = styled.ul /*style*/ `

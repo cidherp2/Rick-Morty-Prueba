@@ -99,7 +99,7 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
   const [tagInfo, setTagInfo] = useState<string>("")
   const [selectedTagId, setSelectedTagId] = useState<number>();
   const { parsedJwt } = useJwt()
-  
+
 
   const deleteFavorite = async (favoriteId: string): Promise<void> => {
     try {
@@ -161,8 +161,8 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
 
   const fetchTags = async (favoriteId: string): Promise<any[]> => {
 
-    if (!extractFavoriteIdFromURL()){
-       
+    if (!extractFavoriteIdFromURL()) {
+
     }
 
     try {
@@ -173,10 +173,10 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
       }
 
       const tagsi = await response.json();
-      if (tagsi.length !== tags?.length ){
+      if (tagsi.length !== tags?.length) {
         setTags(tagsi);
       }
-      
+
       console.log(tags)
 
       return tagsi;
@@ -253,6 +253,7 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
             type='text'
             value={tag}
             onChange={handleSetTag}
+            placeholder='write your tag'
           >
           </input>
           <button
@@ -265,13 +266,13 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
         >
           {tags?.map((tag) => (
             <Tag
-            key={tag?.id}
+              key={tag?.id}
               type="text"
               defaultValue={tag?.tag}
               onChange={(event) => setTagInfo(event.target.value)}
               onBlur={() => handleTagUpdate(tag?.id)}
               placeholder={tag?.tag}
-               autoFocus
+              autoFocus
             >
 
             </Tag>

@@ -47,8 +47,6 @@ width: 50%;
 background: rgb(255,255,255,.8);
 `
 
-
-
 const Favorites = () => {
     const { parsedJwt } = useJwt()
     const [favorites, setFavorites] = useState<FavoriteLocation[]>()
@@ -237,20 +235,16 @@ const Favorites = () => {
         catch (err) {
             console.log(err);
         }
-
     }
-
-
-
-
 
     useEffect(() => {
         fetchUserFavorites(parsedJwt?.id)
         // setButtonVisible(true)
         // setButtonVisible(false)
         // if (buttonVisible===false){
-        //  //fetchLocations(); 
-        // fetchCharacters()
+        //  //fetchLocations();
+        setChars([])
+        fetchCharacters()
         // // setButtonVisible(false)
         // }
 
@@ -270,8 +264,8 @@ const Favorites = () => {
                         <TagInput
                             onChange={handleSearchBarText}
                             // onChange={handleSearchBaText}
-                            placeholder="search favorites by tag"
-                        ></TagInput>
+                            placeholder="search favorites by tag 🔎"
+                        />
                         {/* <button
                      onClick={()=> setTagInfo().then(()=>{fetchCharactersBytag()})}
                     >
