@@ -5,6 +5,7 @@ export interface Character {
     species: string;
     type: string;
     gender: string;
+    favorite_id: string;
     origin: {
       name: string;
       url: string;
@@ -37,6 +38,7 @@ export interface Character {
     residents: string[]; // Assuming these are URLs to character resources
     url: string;
     created: string;
+    favorite_id: string;
   }
   
   export interface LocationInfo {

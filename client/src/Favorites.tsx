@@ -47,6 +47,7 @@ const Favorites = () => {
     const [characters,setChars] = useState<Character[]>([])
     const [modalOpen,setModalOpen] = useState<boolean>(false)
     const [selectedFav, setSelectedFav] = useState<string>("")
+    const [selectedFav_id, setSelectedFav_id] = useState<string>("")
     const[selectedType, setSelectedType] = useState<string>("")
 
     async function fetchUserFavorites(userId: string): Promise<FavoriteLocation[]> {
@@ -57,8 +58,8 @@ const Favorites = () => {
         }
 
         const data: FavoriteLocation[] = await response.json();
-
         return data;
+    
     }
 
     const fetchUserFavoriteChars = async (userId: string): Promise<FavoriteChars[]> => {
@@ -82,7 +83,6 @@ const Favorites = () => {
         async function fetchFavorites() {
             try {
                 const data = await fetchUserFavorites(parsedJwt?.id);
-                console.log(data)
                 setFavorites(data);
             } catch (err) {
                 console.log(err)
@@ -92,7 +92,6 @@ const Favorites = () => {
         async function fetchFavoriteChars() {
             try {
                 const data = await fetchUserFavoriteChars(parsedJwt?.id);
-                console.log(data)
                 setFavoriteChars(data);
             } catch (err) {
                 console.log(err)
@@ -108,12 +107,14 @@ const Favorites = () => {
         try {
             const fetchPromises = favorites?.map(async (fav) => {
                 const response = await fetch(`https://rickandmortyapi.com/api/location/${fav?.item_id}`);
+                
                 if (!response.ok) {
                     console.log("Bad response from server");
                     return null;
                 }
-
+    
                 const location = await response?.json();
+                location.favorite_id = fav.favorite_id;
                 return location;
             });
             if (fetchPromises) {
@@ -122,12 +123,11 @@ const Favorites = () => {
                 setLocations((prevLocations) => [...prevLocations, ...validLocations]);
                 console.log(validLocations)
             }
-
+    
         } catch (err) {
             console.log(err);
         }
     };
-
     const fetchCharacters = async () => {
         try {
             const fetchPromises = favoriteChars?.map(async (fav) => {
@@ -136,24 +136,31 @@ const Favorites = () => {
                     console.log("Bad response from server");
                     return null;
                 }
-
-                const location = await response?.json();
-                return location;
+    
+                const character = await response?.json();
+                character.favorite_id = fav.favorite_id;
+                return character;
             });
             if (fetchPromises) {
-                const chars = await Promise.all(fetchPromises as any);
-                const validChars = chars?.filter(location => location !== null);
-                setChars((prevLocations) => [...prevLocations, ...validChars]);
-                console.log(validChars)
+                const characters = await Promise.all(fetchPromises as any);
+                const validCharacters = characters?.filter(character => character !== null);
+                setChars((prevCharacters) => [...prevCharacters, ...validCharacters]);
+                console.log(validCharacters);
             }
-
         } catch (err) {
             console.log(err);
         }
-    }
+    };
 
-    const selectedFavHandler = async (selected:string) => {
+    const selectedFavHandler = async (selected:string, selectedFav:string) => {
         setSelectedFav(selected)
+        setSelectedFav_id(selectedFav)
+        updateURLWithSearchParam('favorite_id', selectedFav);
+    }
+    const updateURLWithSearchParam = (paramName: string, paramValue: string) => {
+        const url = new URL(window.location.href);
+        url.searchParams.set(paramName, paramValue);
+        window.history.pushState({}, '', url.toString());
     }
 
     const selectedTypeHandler = () => {
@@ -187,7 +194,8 @@ const Favorites = () => {
                 <LocationCard
                 onClick={() => {
                     modalOpenHnadler().then(() => {
-                      selectedFavHandler(fav?.id.toString());
+                      selectedFavHandler(fav?.id.toString(), fav?.favorite_id.toString()
+                    );
                     });
                   }}
                     key={fav?.id}
@@ -209,7 +217,7 @@ const Favorites = () => {
                 <CharCard id="char-card"
                 onClick={() => {
                     modalOpenHnadler().then(() => {
-                      selectedFavHandler(fav?.id.toString());
+                      selectedFavHandler(fav?.id.toString(), fav?.favorite_id.toString());
                     });
                   }}
                 height="26rem"

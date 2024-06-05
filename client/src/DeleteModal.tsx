@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useJwt } from './TokenContex';
 
@@ -24,6 +24,44 @@ const ModalContent = styled.div /*style*/ `
   position: relative;
   width:25%;
   height:15rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+
+  h2{
+    margin:0;
+  }
+  .deleteBtton{
+    display:flex;
+    align-items:center;
+    font-size:.8rem;
+  }
+  .tagForm{
+  display:flex;
+  gap:.2rem;
+  margin-top:1rem;
+
+  
+
+  }
+  .addTagButton{
+  background:white;
+ 
+  color:black;
+  border-radius:.5rem;
+  }
+  .tagsDiv{
+  display:flex;
+  margin-bottom:auto;
+  margin-top:1rem;
+  justify-content:center;
+  gap:.1rem;
+  :hover{
+  opacity:.5 ;
+  cursor:pointer;
+  }
+  }
 `;
 
 const Cerrar = styled.button /*style*/ `
@@ -35,6 +73,15 @@ const Cerrar = styled.button /*style*/ `
   background-color: #e74c3c;
 `;
 
+const Tag = styled.input /*style*/ `
+background: rgb(0,0,0,.2);
+color:black;
+width:15%;
+border-radius:1rem;
+border:none;
+text-align:center;
+`
+
 
 
 interface ModalProps {
@@ -43,6 +90,12 @@ interface ModalProps {
 }
 
 const DeleteModal: React.FC<ModalProps> = (props) => {
+
+  const [tag,setTag] = useState<string>("")
+  const[tags,setTags] =useState<any[]>()
+  const [favorite_id, setFavorite_id] = useState<string | null>(extractFavoriteIdFromURL())
+  const [tagInfo, setTagInfo] = useState<string> ("")
+  const [selectedTagId, setSelectedTagId] = useState<number>();
 
   const deleteFavorite = async (favoriteId: string): Promise<void> => {
     try {
@@ -75,21 +128,122 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
     }
   }
 
+  const addTagCall = async (favoriteId:string | null): Promise<void> =>{
+    try {
+      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/tags/addTag/${favoriteId}`,{
+        method:"POST",
+        headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tag:tag})
+      });
+
+      if(response.ok){
+        console.log("tag added successfully", tag)
+      }
+
+      if(!response.ok){
+        console.error('Failed to add tag');
+      }
+      //window.alert("aaaaaa")
+    }
+
+    catch(err){
+      console.log(err)
+    }
+
+  }
+
+  const fetchTags = async (favoriteId: string): Promise<any[]> => {
+    try {
+        const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/tags/getTags/${favoriteId}`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch tags');
+        }
+        
+        const tags = await response.json();
+        setTags(tags);
+        console.log(tags)
+  
+        return tags;
+    } catch (err) {
+        console.error('Error fetching tags:', err);
+        throw err; // Propagate the error for handling in the calling function
+    }
+};
+
+  const handleSetTag = (e: React.ChangeEvent<HTMLInputElement>) =>{
+    const change = e.target.value;
+    setTag(change)
+  }
+
+  function extractFavoriteIdFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('favorite_id');
+  }
+
+   useEffect (()=>{
+setFavorite_id(extractFavoriteIdFromURL())
+console.log(favorite_id)
+
+   },[favorite_id])
+
+   useEffect (()=>{
+    fetchTags(extractFavoriteIdFromURL() as string)
+   },[tags])
+
+   const handleTagInfo = (e: React.ChangeEvent<HTMLInputElement>, tagId:number) =>{
+    const change = e.target.value;
+    setTagInfo(change)
+    setSelectedTagId(tagId);
+  }
+  
+
   return (
     <ModalOverlay
 
     >
       <ModalContent>
-        <h2>Delete from favorites</h2>
+        <h2>Favorite Info</h2>
         <Cerrar
           onClick={props.closeModal}
         >X</Cerrar>
+        <div
+        className='tagForm'
+        >
+        <input
+        className='addTagButton'
+        type='text'
+        value={tag}
+        onChange={handleSetTag}
+        >
+        </input>
         <button
-
+        style={{background:"rgb(151, 206, 76, .8)"}}
+        onClick={()=>{addTagCall(extractFavoriteIdFromURL())}}
+        >🔎</button>
+        </div>
+        <div
+        className='tagsDiv'
+        >
+       {tags?.map((tag)=>(
+        <Tag
+        onChange={(event) => handleTagInfo(event, tag?.id)} 
+        value={tag.id === selectedTagId ? tagInfo : undefined} 
+        placeholder={tag.tag}
+        >
+          
+        </Tag>
+      
+       ))}
+       </div>
+        <button
+        className='deleteBtton'
           onClick={() => {
             if (props?.item_id) {
               deleteFavorite(props?.item_id)
-                .then(() => deleteFavoriteLocation(props?.item_id))
+                .then(() => deleteFavoriteLocation(favorite_id as string))
                 .then(() => {
                   props.closeModal();
                   window.location.reload();
@@ -99,7 +253,7 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
                 });
             }
           }}
-          style={{ background: "#e74c3c", color: "white", height: "8rem" }}
+          style={{ background: "#e74c3c", color: "white", height: "2rem", width:"45%"}}
           type='button'
         >Delete From Favorites</button>
       </ModalContent>
