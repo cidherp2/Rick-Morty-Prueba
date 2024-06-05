@@ -5,6 +5,6 @@ const tags = require ("./tagRoutes")
 
 router.use("/user",user)
 router.use("/favorites",favorites)
-router.use("/tags", favorites)
+router.use("/tags", tags)
 
 module.exports = router
