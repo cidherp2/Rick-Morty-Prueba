@@ -108,4 +108,33 @@ router.delete('/delete-fav-location/:id', async (req, res) => {
     }
 });
 
+router.get("/search-character-tags", async (req, res) => {
+    const  {tag}  = req.body;
+    if (!tag) {
+        return res.status(400).json({ error: 'Tag query parameter is required' });
+    }
+    
+    try {
+        const query = `
+            SELECT 
+                Tags.id AS tag_id,
+                Tags.tag,
+                Tags.favorite_id
+            FROM 
+                Tags
+            JOIN 
+                favorites ON Tags.favorite_id = favorites.id
+            WHERE 
+                Tags.tag = ?;
+        `;
+        const [results] = await db.execute(query, [tag]);
+        res.json(results);  
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+
 module.exports = router
