@@ -36,7 +36,7 @@ width:30%;
 const FavImage = styled(CharImg) /*style*/ `
 width:50%;
 `
-const TagInput = styled (Tag) /*style*/ `
+const TagInput = styled(Tag) /*style*/ `
 font-size: 1.3rem;
 font-weight: 130;
 position: absolute;
@@ -55,11 +55,11 @@ const Favorites = () => {
     const [favoriteChars, setFavoriteChars] = useState<FavoriteChars[]>()
     const [locations, setLocations] = useState<Location[]>([])
     const [buttonVisible, setButtonVisible] = useState<boolean>(true)
-    const [characters,setChars] = useState<Character[]>([])
-    const [modalOpen,setModalOpen] = useState<boolean>(false)
+    const [characters, setChars] = useState<Character[]>([])
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
     const [selectedFav, setSelectedFav] = useState<string>("")
     const [selectedFav_id, setSelectedFav_id] = useState<string>("")
-    const[selectedType, setSelectedType] = useState<string>("")
+    const [selectedType, setSelectedType] = useState<string>("")
     const [searcBarText, setSearchBarText] = useState<string>("")
     const [favCharsByTag, setCharsByTag] = useState<any[]>([])
 
@@ -72,7 +72,7 @@ const Favorites = () => {
 
         const data: FavoriteLocation[] = await response.json();
         return data;
-    
+
     }
 
     const fetchUserFavoriteChars = async (userId: string): Promise<FavoriteChars[]> => {
@@ -87,7 +87,7 @@ const Favorites = () => {
         return data;
     }
 
-    const modalOpenHnadler = async () =>{
+    const modalOpenHnadler = async () => {
 
         setModalOpen(true)
     }
@@ -100,7 +100,7 @@ const Favorites = () => {
             } catch (err) {
                 console.log(err)
             }
-            
+
         }
 
         async function fetchFavoriteChars() {
@@ -115,16 +115,6 @@ const Favorites = () => {
         fetchFavorites();
     }, []);
 
-    const setTagInfo = async () =>{
-        try{
-
-            const data = await fetchFavoriteTag(parsedJwt?.id,searcBarText)
-            setCharsByTag(data)
-        }
-        catch(err){
-            console.log(err);
-        }
-    } 
 
 
 
@@ -132,12 +122,12 @@ const Favorites = () => {
         try {
             const fetchPromises = favorites?.map(async (fav) => {
                 const response = await fetch(`https://rickandmortyapi.com/api/location/${fav?.item_id}`);
-                
+
                 if (!response.ok) {
                     console.log("Bad response from server");
                     return null;
                 }
-    
+
                 const location = await response?.json();
                 location.favorite_id = fav.favorite_id;
                 return location;
@@ -148,7 +138,7 @@ const Favorites = () => {
                 setLocations((prevLocations) => [...prevLocations, ...validLocations]);
                 console.log(validLocations)
             }
-    
+
         } catch (err) {
             console.log(err);
         }
@@ -161,7 +151,7 @@ const Favorites = () => {
                     console.log("Bad response from server");
                     return null;
                 }
-    
+
                 const character = await response?.json();
                 character.favorite_id = fav.favorite_id;
                 console.log(character)
@@ -186,7 +176,7 @@ const Favorites = () => {
                     console.log("Bad response from server");
                     return null;
                 }
-    
+
                 const character = await response?.json();
                 character.favorite_id = fav.favorite_id;
                 console.log(character)
@@ -203,7 +193,7 @@ const Favorites = () => {
         }
     };
 
-    const selectedFavHandler = async (selected:string, selectedFav:string) => {
+    const selectedFavHandler = async (selected: string, selectedFav: string) => {
         setSelectedFav(selected)
         setSelectedFav_id(selectedFav)
         updateURLWithSearchParam('favorite_id', selectedFav);
@@ -215,35 +205,44 @@ const Favorites = () => {
     }
 
     const fetchFavoriteTag = async (userId: string, tag: string) => {
-    try {
-        const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/search-character-tags/${userId}`, {
-            method: 'POST', // Change the method to POST
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ tag }) // Pass tag in the request body
-        });
+        try {
+            const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/search-character-tags/${userId}`, {
+                method: 'POST', // Change the method to POST
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tag }) // Pass tag in the request body
+            });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            return await response.json(); // Return the data
+        } catch (error) {
+            console.error('Error:', error);
+            return null; // Return null or handle error appropriately
+        }
+    }
+
+    const handleSearchBarText = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const change = e.target.value
+        setSearchBarText(change)
+
+        try {
+            const data = await fetchFavoriteTag(parsedJwt?.id, change)
+            setCharsByTag(data)
+            fetchCharactersBytag()
+        }
+        catch (err) {
+            console.log(err);
         }
 
-        const data = await response.json();
-        return data; // Return the data
-    } catch (error) {
-        console.error('Error:', error);
-        return null; // Return null or handle error appropriately
     }
-}
 
-const handleSearchBaText = async (e: React.ChangeEvent<HTMLInputElement>) =>{
-    const change = e.target.value
-    setSearchBarText(change)
-}
 
-    
 
-   
+
 
     useEffect(() => {
         fetchUserFavorites(parsedJwt?.id)
@@ -261,20 +260,19 @@ const handleSearchBaText = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         <ScrollContainer>
             {buttonVisible && (
                 <RickAndMortyButton
-                     onClick={() => { setChars([]) , fetchLocations(), fetchCharacters() }}
-                    // onClick={()=> setTagInfo().then(()=>{fetchCharactersBytag()})}
+                    onClick={() => { setChars([]), fetchLocations(), fetchCharacters() }}
+                // onClick={()=> setTagInfo().then(()=>{fetchCharactersBytag()})}
                 >
                     <FavImage
                         src={head}
                     ></FavImage>
                     <div>
-                    <TagInput
-                   
-                    onChange={(e)=>{handleSearchBaText(e).then(() =>{setTagInfo()}).then(()=>{fetchCharactersBytag()})}}
-                    // onChange={handleSearchBaText}
-                    placeholder="search favorites by tag"
-                    ></TagInput>
-                    {/* <button
+                        <TagInput
+                            onChange={handleSearchBarText}
+                            // onChange={handleSearchBaText}
+                            placeholder="search favorites by tag"
+                        ></TagInput>
+                        {/* <button
                      onClick={()=> setTagInfo().then(()=>{fetchCharactersBytag()})}
                     >
                         🔎
@@ -287,12 +285,12 @@ const handleSearchBaText = async (e: React.ChangeEvent<HTMLInputElement>) =>{
             )}
             {locations?.map((fav) => (
                 <LocationCard
-                onClick={() => {
-                    modalOpenHnadler().then(() => {
-                      selectedFavHandler(fav?.id.toString(), fav?.favorite_id.toString()
-                    );
-                    });
-                  }}
+                    onClick={() => {
+                        modalOpenHnadler().then(() => {
+                            selectedFavHandler(fav?.id.toString(), fav?.favorite_id.toString()
+                            );
+                        });
+                    }}
                     key={fav?.id}
                     height="26rem"
                 >
@@ -310,13 +308,13 @@ const handleSearchBaText = async (e: React.ChangeEvent<HTMLInputElement>) =>{
             ))}
             {characters?.map((fav) => (
                 <CharCard id="char-card"
-                onClick={() => {
-                    modalOpenHnadler().then(() => {
-                      selectedFavHandler(fav?.id.toString(), fav?.favorite_id.toString());
-                    });
-                  }}
-                height="26rem"
-                 key={fav?.id}
+                    onClick={() => {
+                        modalOpenHnadler().then(() => {
+                            selectedFavHandler(fav?.id.toString(), fav?.favorite_id.toString());
+                        });
+                    }}
+                    height="26rem"
+                    key={fav?.id}
                 >
                     <ImgCont>
                         <CharImg
@@ -330,13 +328,13 @@ const handleSearchBaText = async (e: React.ChangeEvent<HTMLInputElement>) =>{
                     </CardInfo>
                 </CharCard>
             ))}
-            {modalOpen &&(
-            <DeleteModal
-            item_id={selectedFav}
-            closeModal={()=>{setModalOpen(false)}}
-            >
+            {modalOpen && (
+                <DeleteModal
+                    item_id={selectedFav}
+                    closeModal={() => { setModalOpen(false) }}
+                >
 
-            </DeleteModal>
+                </DeleteModal>
             )}
         </ScrollContainer>
     )

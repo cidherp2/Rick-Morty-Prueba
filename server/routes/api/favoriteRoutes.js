@@ -109,7 +109,7 @@ router.delete('/delete-fav-location/:id', async (req, res) => {
 });
 
 router.post("/search-character-tags/:user_id", async (req, res) => {
-   const  tag  = req.body.tag;
+    const tag = req.body.tag;
     const userId = req.params.user_id;
     
     if (!tag || !userId) {
@@ -128,7 +128,7 @@ router.post("/search-character-tags/:user_id", async (req, res) => {
             JOIN 
                 favorites ON Tags.favorite_id = favorites.id
             WHERE 
-                Tags.tag LIKE ? AND
+                Tags.tag LIKE CONCAT(?, '%') AND
                 Tags.user_id = ?;`;
         const [results] = await db.execute(query, [tag, userId]);
         res.json(results);  
