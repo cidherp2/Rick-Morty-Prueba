@@ -118,6 +118,7 @@ const Favorites = () => {
     const setTagInfo = async () =>{
         try{
 
+            const data = await fetchFavoriteTag()
         }
         catch(err){
             console.log(err);
