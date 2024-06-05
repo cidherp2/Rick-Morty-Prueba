@@ -1,13 +1,14 @@
 const router = require("express").Router()
 const db = require ("../../config/connection")
 
-router.post("/addTag/:favorite_id", async (req,res)=>{
+router.post("/addTag/:favorite_id/:user_id", async (req,res)=>{
     const favoriteId = req.params.favorite_id
     const {tag}= req.body
+    const userId = req.params.user_id
     try{
       await db.execute (
-        "INSERT INTO Tags (tag, favorite_id) VALUES (?,?)",
-        [tag,favoriteId]
+        "INSERT INTO Tags (tag, favorite_id,user_id) VALUES (?,?,?)",
+        [tag,favoriteId,userId]
       )
       res.status(201).json({message:"Tag added"})
     }

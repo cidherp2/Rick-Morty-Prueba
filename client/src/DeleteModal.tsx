@@ -98,6 +98,8 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
   const [favorite_id, setFavorite_id] = useState<string | null>(extractFavoriteIdFromURL())
   const [tagInfo, setTagInfo] = useState<string>("")
   const [selectedTagId, setSelectedTagId] = useState<number>();
+  const { parsedJwt } = useJwt()
+  
 
   const deleteFavorite = async (favoriteId: string): Promise<void> => {
     try {
@@ -132,7 +134,7 @@ const DeleteModal: React.FC<ModalProps> = (props) => {
 
   const addTagCall = async (favoriteId: string | null): Promise<void> => {
     try {
-      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/tags/addTag/${favoriteId}`, {
+      const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/tags/addTag/${favoriteId}/${parsedJwt?.id}`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'

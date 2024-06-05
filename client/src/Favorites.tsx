@@ -118,7 +118,8 @@ const Favorites = () => {
     const setTagInfo = async () =>{
         try{
 
-            const data = await fetchFavoriteTag()
+            const data = await fetchFavoriteTag(parsedJwt?.id,searcBarText)
+            setCharsByTag(data)
         }
         catch(err){
             console.log(err);
@@ -177,8 +178,9 @@ const Favorites = () => {
         }
     };
     const fetchCharactersBytag = async () => {
+        setChars([])
         try {
-            const fetchPromises = favoriteChars?.map(async (fav) => {
+            const fetchPromises = favCharsByTag?.map(async (fav) => {
                 const response = await fetch(`https://rickandmortyapi.com/api/character/${fav?.item_id}`);
                 if (!response.ok) {
                     console.log("Bad response from server");
@@ -212,26 +214,32 @@ const Favorites = () => {
         window.history.pushState({}, '', url.toString());
     }
 
-    const fetchFavoriteTag = async (userId: string) => {
-        try {
-            const response = await fetch(`/search-character-tags?user_id=${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-    
-            const data = await response.json();
-            return data; // Return the data
-        } catch (error) {
-            console.error('Error:', error);
-            return null; // Return null or handle error appropriately
+    const fetchFavoriteTag = async (userId: string, tag: string) => {
+    try {
+        const response = await fetch(`https://rick-and-morty-backend-889d8aa11dad.herokuapp.com/exam/api/favorites/search-character-tags/${userId}`, {
+            method: 'POST', // Change the method to POST
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ tag }) // Pass tag in the request body
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+
+        const data = await response.json();
+        return data; // Return the data
+    } catch (error) {
+        console.error('Error:', error);
+        return null; // Return null or handle error appropriately
     }
+}
+
+const handleSearchBaText = async (e: React.ChangeEvent<HTMLInputElement>) =>{
+    const change = e.target.value
+    setSearchBarText(change)
+}
 
     
 
@@ -253,13 +261,25 @@ const Favorites = () => {
         <ScrollContainer>
             {buttonVisible && (
                 <RickAndMortyButton
-                     onClick={() => { fetchLocations(), fetchCharacters(),setButtonVisible(false) }}
+                     onClick={() => { setChars([]) , fetchLocations(), fetchCharacters() }}
+                    // onClick={()=> setTagInfo().then(()=>{fetchCharactersBytag()})}
                 >
                     <FavImage
                         src={head}
                     ></FavImage>
+                    <div>
                     <TagInput
+                   
+                    onChange={(e)=>{handleSearchBaText(e).then(() =>{setTagInfo()}).then(()=>{fetchCharactersBytag()})}}
+                    // onChange={handleSearchBaText}
+                    placeholder="search favorites by tag"
                     ></TagInput>
+                    {/* <button
+                     onClick={()=> setTagInfo().then(()=>{fetchCharactersBytag()})}
+                    >
+                        🔎
+                    </button> */}
+                    </div>
                     {/* <h1
                         style={{ fontSize: "1.3rem", fontWeight: "130", position: "absolute", bottom: "-5%", left: "28%" }}
                     >Click To see your favorites</h1> */}
